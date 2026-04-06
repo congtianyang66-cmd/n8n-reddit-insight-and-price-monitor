@@ -1,0 +1,374 @@
+{
+  "name": "Digital Tattoo 品牌洞察库",
+  "nodes": [
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.apify.com/v2/acts/trudax~reddit-scraper-lite/run-sync-get-dataset-items?token=YOUR_APIFY_API_TOKEN",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "=json",
+        "bodyParameters": {
+          "parameters": [
+            {}
+          ]
+        },
+        "jsonBody": "={\n  \"searches\": {{ JSON.stringify($json.keywordsArray) }},\n  \"maxItems\": 2,\n  \"maxComments\": 1,\n  \"searchPosts\": true,\n  \"searchComments\": true,\n  \"scrollTimeout\": 10,\n  \"proxy\": {\n    \"useApifyProxy\": true\n  }\n}",
+        "options": {
+          "timeout": 300000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -48,
+        -352
+      ],
+      "id": "2db29af1-f5d6-4cc1-8a7e-30e8cdc03495",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "78574cae-8419-4b8f-9251-4d11a833bafd",
+              "name": "=keywordsArray",
+              "value": "={{ $json.userKeywords.split(',').map(item => item.trim()) }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -192,
+        -208
+      ],
+      "id": "6c3c5936-3dc1-4107-bfb1-d2268d9ca01a",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "formTitle": "Digital Tattoo 市场调研助手",
+        "formDescription": "请输入关键词，AI 将自动抓取 Reddit 洞察并生成品牌故事",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "请输入调研关键词 (逗号分隔)",
+              "fieldType": "textarea",
+              "fieldName": "userKeywords",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.5,
+      "position": [
+        -368,
+        -80
+      ],
+      "id": "0a552e8c-429f-476b-b54f-8960ea7d15aa",
+      "name": "On form submission",
+      "webhookId": "YOUR_WEBHOOK_ID"
+    },
+    {
+      "parameters": {
+        "promptType": "=define",
+        "text": "=# Role\n你现在是先锋手机壳品牌 DIS-COVER（Digital Tattoo）的首席增长官与品牌战略顾问。\n\n你的任务不是机械总结 Reddit，而是基于真实抓取到的 Reddit 帖子与评论，提炼出对 DIS-COVER 有商业价值的消费者洞察、竞品问题、品牌机会与营销表达。\n\n# Brand Identity: DIS-COVER\n- 核心理念：The Soul Under the Cover\n- 品牌主张：手机壳不是普通配件，而是数字世界中的可更换纹身（Digital Tattoo）\n- 核心用户：追求独特审美、情绪密度与质感表达的 Overthinking Club\n- 品牌机会：填补 Casetify 等高价设计款与低质白牌之间的空白，提供具有艺术张力、可负担、可持续表达自我的手机壳\n\n# Input Data\n{{ JSON.stringify($json) }}\n\n# Core Rules\n1. **禁止幻觉**：所有分析必须基于输入数据。没有证据就明确写“该项未在原始数据中提取到”。\n2. **先事实，后洞察**：先从原始数据中提取用户说了什么，再解释这些内容对 DIS-COVER 有什么意义。\n3. **评论优先**：洞察、原话、竞品问题优先来自评论区；帖子正文用于补充讨论背景。\n4. **品牌视角解释**：允许结合 DIS-COVER 的品牌逻辑做解释，但不得编造 Reddit 用户没说过的事实。\n5. **适配 Google Sheet**：输出必须适合写入单元格，信息密度高，但不要冗长空话。\n6. **严格按 6 个 section 输出，并使用 #### 分隔。**\n\n# 分析要求\n请重点挖掘以下内容：\n- 用户对手机壳的潜意识矛盾：既要保护、又要美感、又要轻薄、又要表达个性\n- 用户对竞品的真实评价：质量翻车、黄变、脱皮、手感、厚度、兼容性、物流、客服\n- 用户对“好看”的真实定义：颜色、图案、材质、联名、适配安卓/iPhone、是否廉价感\n- 与 DIS-COVER 最相关的价值点：数字纹身、自我表达、质感、不过度工业模板化、民主化审美表达\n\n# Output Structure（严格执行）\n\n####\n【1. 数据汇总 (Data Summary)】:\n- 统计本次扫描了多少个 source（帖子组 / 帖子+评论组）。\n- 列出原始数据中明确出现的品牌或竞品名称。\n- 简要说明本次数据的主要讨论主题是什么（如质量问题、审美诉求、安卓选择少、物流/售后问题等）。\n\n####\n【2. 深度洞察 (Deep Insights)】:\n- 按 keyword 分别总结：\n  - 用户情绪内核（如失望、嫉妒、焦虑、嫌弃、纠结）\n  - 核心产品诉求（如轻薄、质感、耐久、美感、兼容性、自我表达）\n  - 若有价值，可补充“潜意识矛盾”\n- 最后输出【全局汇总】：总结一个最适合 DIS-COVER 的市场机会点，必须与 Digital Tattoo / Overthinking Club 相关。\n\n####\n【3. Competitor Issues】:\n- 分为两部分：\n  - 【值得学习的优势】用户认可竞品的地方（设计多、联名强、适配 MagSafe、风格表达强、兼容性好等）\n  - 【主要问题与风险】用户抱怨的缺点（如 peeling、yellowing、bulky、slippery、cheap feel、poor durability、seized by customs、customer service 差等）\n- 只写原始数据中有证据支持的内容。\n\n####\n【4. 用户原话与链接 (Verbatim & URL)】:\n- 必须提取 3 条最有价值的英文原话，优先来自评论区；若评论不足，可用帖子正文补充，但必须标注来源是 Post 还是 Comment。\n- 格式：\n- \"[作者/Source ID]\": \"Original Quote\" (URL) —— 中文解读：这句话反映了什么消费心理 / 产品焦虑 / 审美渴望\n- 原话必须尽量保留英文原文，不要改写。\n\n####\n【5. 品牌机会 (Opportunity)】:\n- 基于本次洞察，输出 2 条对 DIS-COVER 最有价值的机会点。\n- 必须写清：\n  - 对应哪类用户痛点/渴望\n  - DIS-COVER 可以如何切入\n  - 为什么这与品牌“数字纹身 / 可负担表达 / 反工业模板”一致\n\n####\n【6. 营销文案 (Mkt Copy)】:\n- 输出两段文案：\n  - 品牌侧：强调 Digital Tattoo / The Soul Under the Cover / 独特表达 / 冷峻高级感\n  - 产品侧：针对本次数据中最突出的竞品问题（如黄变、脱皮、厚重、廉价感、客服差等）建立信任感\n- 风格要高级、克制、有品牌感，不要像低端广告口号。\n\n# Writing Style\n- 中文输出为主，英文原话保留原文\n- 不要写“根据以上分析”“以下是结果”等废话\n- 每个 section 都要有内容；若确实没有，就明确写“该项未在原始数据中提取到”\n- 输出适合直接拆分写入 Google Sheet 单元格",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        272,
+        -96
+      ],
+      "id": "946ed9ab-0216-4957-8056-510fca96a8e4",
+      "name": "AI Agent",
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "list",
+          "cachedResultName": "Digital Tattoo 品牌洞察库",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "工作表1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/YOUR_GOOGLE_SHEET_ID/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "搜索词 (Keyword)": "={{ $node[\"Edit Fields\"].json[\"keywordsArray\"].join(\", \") }}",
+            "调研时间 (Time)": "={{ $now.format('YYYY-MM-DD HH:mm') }}",
+            "用户原话与链接 (Verbatim & URL)": "={{ $node[\"AI Agent\"].json.output.split('####')[4].trim() }}",
+            "数据汇总 (从Reddit api runs调取爬取了多少条帖子)": "={{ $node[\"AI Agent\"].json.output.split('####')[1].trim() }}",
+            "深度洞察 (基于每个关键词的爬取内容的汇总，用户 产品 品牌 市场，和贴合主题的价值点提取)": "={{ $node[\"AI Agent\"].json.output.split('####')[2].trim() }}",
+            "Competitor Issues（用户提到的竞品问题或优劣反馈）": "={{ $node[\"AI Agent\"].json.output.split('####')[3].trim() }}",
+            "品牌机会 (针对洞察和抓取内容的Opportunity)": "={{ $node[\"AI Agent\"].json.output.split('####')[5].trim() }}",
+            "营销文案 (Mkt Copy - 基于用户洞察和市场趋势的营销文案建议，品牌侧和产品侧)": "={{ $node[\"AI Agent\"].json.output.split('####')[6].trim() }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "搜索词 (Keyword)",
+              "displayName": "搜索词 (Keyword)",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "数据汇总 (从Reddit api runs调取爬取了多少条帖子)",
+              "displayName": "数据汇总 (从Reddit api runs调取爬取了多少条帖子)",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "深度洞察 (基于每个关键词的爬取内容的汇总，用户 产品 品牌 市场，和贴合主题的价值点提取)",
+              "displayName": "深度洞察 (基于每个关键词的爬取内容的汇总，用户 产品 品牌 市场，和贴合主题的价值点提取)",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Competitor Issues（用户提到的竞品问题或优劣反馈）",
+              "displayName": "Competitor Issues（用户提到的竞品问题或优劣反馈）",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "用户原话与链接 (Verbatim & URL)",
+              "displayName": "用户原话与链接 (Verbatim & URL)",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "品牌机会 (针对洞察和抓取内容的Opportunity)",
+              "displayName": "品牌机会 (针对洞察和抓取内容的Opportunity)",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "营销文案 (Mkt Copy - 基于用户洞察和市场趋势的营销文案建议，品牌侧和产品侧)",
+              "displayName": "营销文案 (Mkt Copy - 基于用户洞察和市场趋势的营销文案建议，品牌侧和产品侧)",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "调研时间 (Time)",
+              "displayName": "调研时间 (Time)",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -16,
+        -96
+      ],
+      "id": "763ba5c6-68a4-4b2f-857b-acb9585fa621",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "Google Sheets OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// 获取所有输入 Item\nconst allItems = $input.all();\n\n// 1. 先建立一个“帖子 ID -> 帖子标题”的映射表，方便评论溯源\nconst postMap = {};\nallItems.forEach(item => {\n  if (item.json.dataType === 'post') {\n    postMap[item.json.id] = item.json.title;\n  }\n});\n\n// 2. 循环处理每一条数据，清洗并关联\nreturn allItems.map(item => {\n  const data = item.json;\n  const isPost = data.dataType === 'post';\n  \n  // 查找所属帖子标题：如果是评论，通过 postId 找标题；如果是帖子，就是它自己\n  const parentTitle = isPost ? data.title : (postMap[data.postId] || \"未知原贴 (可能未在本次抓取范围内)\");\n\n  return {\n    json: {\n      // 核心内容\n      content: data.body || data.title, // 评论取正文，帖子取标题或正文 \n      \n      // 溯源上下文：让 AI 知道这条评论是在哪个帖子下发的\n      context_post_title: parentTitle,\n      \n      // 身份与属性\n      type: data.dataType, // post 或 comment \n      username: data.username, // \n      upVotes: data.upVotes || 0, // 点赞数 \n      \n      // 关键：保留原文链接，方便后续点击查看\n      url: data.url, // \n      \n      // 辅助分析字段\n      publish_time: data.createdAt, // \n      community: data.communityName // \n    }\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        80,
+        -384
+      ],
+      "id": "86fb85fd-b15d-442a-90a0-3b90b1f3b440",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        256,
+        -368
+      ],
+      "id": "0d0b3d47-0099-4256-882b-edfe859a9942",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        480,
+        -256
+      ],
+      "id": "4183a24f-ea47-4b74-bfbd-57fab87439ab",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "d48d2be7-bc30-4e8a-8392-ad88897b840c",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "YOUR_INSTANCE_ID"
+  },
+  "id": "2yiKjdfiWX6bArAa",
+  "tags": []
+}
