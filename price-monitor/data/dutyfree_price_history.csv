@@ -1,0 +1,9 @@
+product_name,channel,market,target_size,currency,list_price,sale_price,promo_pct,promo_text,status,source_url,capture_date,capture_time,run_id,run_seq,data_source
+Mugler Angel EDP,duty_free,Boston,100ml,USD,206.0,206.0,0.0,,ok,https://boston.shopdutyfree.com/76/mugler-angel-100ml-eau-de-parfum,2026-04-03,04:47:54,20260403_044754,1,python_script_run
+Mugler Alien EDP,duty_free,Boston,90ml,USD,196.0,196.0,0.0,,ok,https://boston.shopdutyfree.com/76/mugler-alien-90ml-eau-de-parfum,2026-04-03,04:47:54,20260403_044754,1,python_script_run
+Mugler Angel EDP,duty_free,Boston,100ml,USD,206.0,206.0,0.0,,ok,https://boston.shopdutyfree.com/76/mugler-angel-100ml-eau-de-parfum,2026-04-03,04:51:14,20260403_045114,2,python_script_run
+Mugler Alien EDP,duty_free,Boston,90ml,USD,196.0,196.0,0.0,,ok,https://boston.shopdutyfree.com/76/mugler-alien-90ml-eau-de-parfum,2026-04-03,04:51:14,20260403_045114,2,python_script_run
+Mugler Angel EDP,duty_free,Boston,100ml,USD,206.0,206.0,0.0,,ok,https://boston.shopdutyfree.com/76/mugler-angel-100ml-eau-de-parfum,2026-04-03,04:54:16,20260403_045416,3,python_script_run
+Mugler Alien EDP,duty_free,Boston,90ml,USD,196.0,196.0,0.0,,ok,https://boston.shopdutyfree.com/76/mugler-alien-90ml-eau-de-parfum,2026-04-03,04:54:16,20260403_045416,3,python_script_run
+Mugler Angel EDP,duty_free,Boston,100ml,USD,206.0,206.0,0.0,,ok,https://boston.shopdutyfree.com/76/mugler-angel-100ml-eau-de-parfum,2026-04-03,15:46:42,20260403_154642,4,python_script_run
+Mugler Alien EDP,duty_free,Boston,90ml,USD,196.0,196.0,0.0,,ok,https://boston.shopdutyfree.com/76/mugler-alien-90ml-eau-de-parfum,2026-04-03,15:46:42,20260403_154642,4,python_script_run

@@ -1,0 +1,159 @@
+{
+  "name": "Price Monitor",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -128,
+        -64
+      ],
+      "id": "0d795469-1f81-41ed-819d-ca1604d4fc3e",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b61092e1-379f-4f9e-91f4-85f15fde9459",
+              "name": "status",
+              "value": "CHANGE_DETECTED",
+              "type": "string"
+            },
+            {
+              "id": "8d3fbcaa-7da3-4979-85a1-f862f38799ca",
+              "name": "message",
+              "value": "Mugler price change detected.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        80,
+        -64
+      ],
+      "id": "806df574-7120-4b0e-8882-e27a972a0af2",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "5de1afe0-3691-42ee-94fc-769ade51b6e7",
+              "leftValue": "={{$json.status}}",
+              "rightValue": "CHANGE_DETECTED",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        288,
+        -64
+      ],
+      "id": "fc1fcaf8-7008-48c6-aec1-8194d6f3e25e",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "fromEmail": "congtianyang66@gmail.com",
+        "toEmail": "congtian.yang@edu.em-lyon.com",
+        "subject": "Price Alert 🚨",
+        "html": "={{$json.message}}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        496,
+        -160
+      ],
+      "id": "bfd45d39-79a7-4bed-879f-54259c49119a",
+      "name": "Send an Email",
+      "webhookId": "64d18c5d-3ad9-4a76-af84-d6804957cf00",
+      "credentials": {
+        "smtp": {
+          "id": "ko4zeZCnDEEivkaD",
+          "name": "SMTP account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Send an Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "17473940-17be-4e91-a042-3d9f45eefa5f",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "351eabc25737d43dada3ade3c07c8fc9255285bce1222c1ce1a42981a416bf85"
+  },
+  "id": "QnvaxFaGscXxDJsI",
+  "tags": []
+}
